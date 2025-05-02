@@ -1,0 +1,358 @@
+int y;
+int [][]posx=new int[6][6];
+int [][]posy=new int[6][6];
+int vx=1, vy=100;
+int state, bx, by;
+int [][]enemy_state=new int [6][6];
+int cx, cy, j, k;
+int[][]x1=new int[9][9];
+int[][]y1=new int[9][9];
+int[][]x2=new int[9][9];
+int[][]y2=new int[9][9];
+int[][]x3=new int[9][9];
+int[][]y3=new int[9][9];
+int[][]state1=new int[9][9];
+int[][]state2=new int[9][9];
+int[][]state3=new int[9][9];
+void draw_player(int x, int y) {
+  fill(255);
+  stroke(255);
+  triangle(x, y-35, x-18, y-20, x+18, y-20);
+  rect(x-35, y-20, 70, 20);
+}
+
+void enemy(int x, int y, int col) {
+  if (col==7) {
+    fill(0, 0, 0);
+    stroke(0, 0, 0);
+  } else {
+    fill(50, 175, 255/7*col+10);
+    stroke(50, 175, 255/7*col+10);
+  }
+  ellipse(x, y, 60, 20);
+  strokeWeight(5);
+  line(x-10, y, x-30, y+20);
+  line(x+10, y, x+30, y+20);
+  strokeWeight(1);
+  fill(0);
+  ellipse(x-10, y, 5, 10);
+  ellipse(x+10, y, 5, 10);
+}
+
+
+void draw_enemies() {
+  check(bx, by);
+  for (int h=0; h<6; h++) {
+    for (int w=0; w<6; w++) {
+      if (enemy_state[w][h]==1) {
+        enemy(posx[w][h], posy[w][h], 7);
+      } else {   
+        enemy(posx[w][h], posy[w][h], h);
+      }
+    }
+  }
+}
+
+void move_enemies() {
+  for (int h=0; h<6; h++) {
+    for (int w=0; w<6; w++) {
+      posx[w][h]=posx[w][h]+vx;
+      posy[w][h]=posy[w][h]+vy;
+    }
+  }
+  if (posx[1][1]<=170) {
+    vx=1;
+    vy=100;
+  } else if (posx[5][5]>=width-30) {
+    vx=-1;
+    vy=1;
+  } else
+    vy=0;
+}
+
+void player_atack() {
+  if (state==1) {
+    fill(255);
+    ellipse(bx, by, 10, 10);
+    by-=10;
+  }
+  if (by<=0)
+    state=0;
+}
+
+int check(int x, int y) {
+  int num=6;
+  for (int h=0; h<6; h++) {
+    for (int w=0; w<6; w++) {
+      if (dist(x, y, posx[w][h], posy[w][h] )<=30) {
+        enemy_state[w][h]=1;
+        num=w;
+      }
+    }
+  }
+  return num;
+}
+
+void enemy_atack() {     
+
+  if (cy<=0||cy>=height) {
+    j=int(random(6));
+    k=int(random(6));
+    cx=posx[j][k];
+    cy=posy[j][k];
+  }
+
+  fill(255);
+  ellipse(cx, cy, 10, 10);
+  cy+=10-k;
+}
+
+void shield1(int x, int y) {
+  for (int i=0; i<9; i++) {
+    for (int j=0; j<9; j++) {
+      if (state1[i][j]==1) {
+        x1[i][j]=x+20*i;
+        y1[i][j]=y+20*j;
+        rect(x1[i][j], y1[i][j], 20, 20);
+        stroke(0);
+
+        if ((x1[i][j]-10<=bx)&&(bx<=x1[i][j]+10)) {
+          if ((y1[i][j]-10<=by)&&(by<=y1[i][j]+10)) {
+            state1[i][j]=0;
+            by=0;
+          }
+        }
+        if ((x1[i][j]-10<=cx)&&(cx<=x1[i][j]+10)) {
+          if ((y1[i][j]-10<=cy)&&(cy<=y1[i][j]+10)) {
+            state1[i][j]=0;
+            cy=1000;
+          }
+        }
+      }
+    }
+  }
+}
+void shield2(int x, int y) {
+  for (int i=0; i<9; i++) {
+    for (int j=0; j<9; j++) {
+      if (state2[i][j]==1) {
+        x2[i][j]=x+20*i;
+        y2[i][j]=y+20*j;
+        stroke(0);
+        rect(x2[i][j], y2[i][j], 20, 20);
+
+        if ((x2[i][j]-10<=bx)&&(bx<=x2[i][j]+10)) {
+          if ((y2[i][j]-10<=by)&&(by<=y2[i][j]+10)) {
+            state2[i][j]=0;
+            by=0;
+          }
+        }
+        if ((x2[i][j]-10<=cx)&&(cx<=x2[i][j]+10)) {
+          if ((y2[i][j]-10<=cy)&&(cy<=y2[i][j]+10)) {
+            state2[i][j]=0;
+            cy=1000;
+          }
+        }
+      }
+    }
+  }
+}
+void shield3(int x, int y) {
+  for (int i=0; i<9; i++) {
+    for (int j=0; j<9; j++) {
+      if (state3[i][j]==1) {
+        x3[i][j]=x+20*i;
+        y3[i][j]=y+20*j;
+        stroke(0);
+        rect(x3[i][j], y3[i][j], 20, 20);
+
+        if ((x3[i][j]-10<=bx)&&(bx<=x3[i][j]+10)) {
+          if ((y3[i][j]-10<=by)&&(by<=y3[i][j]+10)) {
+            state3[i][j]=0;
+            by=0;
+          }
+        }
+        if ((x3[i][j]-10<=cx)&&(cx<=x3[i][j]+10)) {
+          if ((y3[i][j]-10<=cy)&&(cy<=y3[i][j]+10)) {
+            state3[i][j]=0;
+            cy=1000;
+          }
+        }
+      }
+    }
+  }
+}
+int check2(int x, int y) {
+  int num=9;
+  for (int i=0; i<9; i++) {
+    for (int j=0; j<6; j++) {
+      if ((x1[i][j]-15<=x)&&(x<=x1[i][j]+5)) {
+        if ((y1[i][j]-10<=y)&&(y<=y1[i][j]+10)) {
+          state1[i][j]=0;
+          num=i;
+        }
+      }
+    }
+  }
+  return num;
+}
+
+
+
+void setup() {
+  size(1000, 1000);
+  background(0);
+  y=950;
+  for (int h=0; h<6; h++) {
+    for (int w=0; w<6; w++) {
+      posx[w][h]=100+140*w;
+      posy[w][h]=100+50*h;
+      enemy_state[w][h]=0;
+    }
+  }
+  for (int i=0; i<9; i++) {
+    for (int j=0; j<9; j++) {
+      state1[i][j]=0;
+    }
+  }
+  state1[4][0]=1;
+  for (int i=3; i<6; i++) {
+    state1[i][1]=1;
+  }
+  for (int i=2; i<7; i++) {
+    state1[i][2]=1;
+  }
+  for (int i=1; i<8; i++) {
+    state1[i][3]=1;
+  }
+  for (int i=0; i<9; i++) {
+    state1[i][4]=1;
+  }
+  for (int i=0; i<4; i++) {
+    state1[i][5]=1;
+  }
+  for (int i=5; i<9; i++) {
+    state1[i][5]=1;
+  }
+  for (int i=0; i<3; i++) {
+    state1[i][6]=1;
+  }
+  for (int i=6; i<9; i++) {
+    state1[i][6]=1;
+  }
+  for (int i=0; i<2; i++) {
+    state1[i][7]=1;
+  }
+  for (int i=7; i<9; i++) {
+    state1[i][7]=1;
+  }
+  for (int i=0; i<1; i++) {
+    state1[i][8]=1;
+  }  
+  for (int i=8; i<9; i++) {
+    state1[i][8]=1;
+  }
+  for (int i=0; i<9; i++) {
+    for (int j=0; j<9; j++) {
+      state2[i][j]=0;
+    }
+  }
+  state2[4][0]=1;
+  for (int i=3; i<6; i++) {
+    state2[i][1]=1;
+  }
+  for (int i=2; i<7; i++) {
+    state2[i][2]=1;
+  }
+  for (int i=1; i<8; i++) {
+    state2[i][3]=1;
+  }
+  for (int i=0; i<9; i++) {
+    state2[i][4]=1;
+  }
+  for (int i=0; i<4; i++) {
+    state2[i][5]=1;
+  }
+  for (int i=5; i<9; i++) {
+    state2[i][5]=1;
+  }
+  for (int i=0; i<3; i++) {
+    state2[i][6]=1;
+  }
+  for (int i=6; i<9; i++) {
+    state2[i][6]=1;
+  }
+  for (int i=0; i<2; i++) {
+    state2[i][7]=1;
+  }
+  for (int i=7; i<9; i++) {
+    state2[i][7]=1;
+  }
+  for (int i=0; i<1; i++) {
+    state2[i][8]=1;
+  }  
+  for (int i=8; i<9; i++) {
+    state2[i][8]=1;
+  }
+  for (int i=0; i<9; i++) {
+    for (int j=0; j<9; j++) {
+      state3[i][j]=0;
+    }
+  }
+  state1[4][0]=1;
+  for (int i=3; i<6; i++) {
+    state3[i][1]=1;
+  }
+  for (int i=2; i<7; i++) {
+    state3[i][2]=1;
+  }
+  for (int i=1; i<8; i++) {
+    state3[i][3]=1;
+  }
+  for (int i=0; i<9; i++) {
+    state3[i][4]=1;
+  }
+  for (int i=0; i<4; i++) {
+    state3[i][5]=1;
+  }
+  for (int i=5; i<9; i++) {
+    state3[i][5]=1;
+  }
+  for (int i=0; i<3; i++) {
+    state3[i][6]=1;
+  }
+  for (int i=6; i<9; i++) {
+    state3[i][6]=1;
+  }
+  for (int i=0; i<2; i++) {
+    state3[i][7]=1;
+  }
+  for (int i=7; i<9; i++) {
+    state3[i][7]=1;
+  }
+  for (int i=0; i<1; i++) {
+    state3[i][8]=1;
+  }  
+  for (int i=8; i<9; i++) {
+    state3[i][8]=1;
+  }
+}
+void draw() {
+  background(0);
+  draw_player(mouseX, y);
+  draw_enemies();
+  move_enemies();
+  player_atack();
+  enemy_atack();
+  shield1(200, 700);
+  shield2(450, 700);
+  shield3(700, 700);
+}
+
+void mousePressed() {
+  if (state==0) {
+    state=1;
+    bx=mouseX;
+    by=y-35;
+  }
+}
